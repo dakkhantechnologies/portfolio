@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
 
-  const session = verifySessionToken(token);
+  const session = await verifySessionToken(token);
   if (!session) {
     return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
   }
