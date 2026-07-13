@@ -6,11 +6,16 @@ import { useEffect, useState } from 'react';
 
 export default function Education() {
   const [education, setEducation] = useState<any[]>([]);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetch('/api/education')
-      .then(res => res.json())
-      .then(setEducation);
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to load');
+        return res.json();
+      })
+      .then(setEducation)
+      .catch(err => setError(err.message));
   }, []);
 
   const containerVariants = {
@@ -52,6 +57,12 @@ export default function Education() {
       >
         My academic background
       </motion.p>
+
+      {error && (
+        <div className="glass rounded-xl p-4 text-red-400 mb-6 max-w-4xl mx-auto">
+          Error loading education: {error}
+        </div>
+      )}
 
       <motion.div
         className="max-w-4xl mx-auto"

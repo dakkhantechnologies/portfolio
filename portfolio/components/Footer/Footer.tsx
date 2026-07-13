@@ -6,16 +6,31 @@ import { useEffect, useState } from 'react';
 
 export default function Footer() {
   const [profile, setProfile] = useState<any>(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetch('/api/profile')
-      .then(res => res.json())
-      .then(setProfile);
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to load');
+        return res.json();
+      })
+      .then(setProfile)
+      .catch(err => setError(err.message));
   }, []);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  if (error) {
+    return (
+      <footer className="glass mt-20 py-6 px-4">
+        <div className="max-w-7xl mx-auto text-center text-red-400 text-sm">
+          Error loading footer details: {error}
+        </div>
+      </footer>
+    );
+  }
 
   if (!profile) return null;
 

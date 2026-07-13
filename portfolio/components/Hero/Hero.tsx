@@ -6,12 +6,27 @@ import { useEffect, useState } from 'react';
 
 export default function Hero() {
   const [profile, setProfile] = useState<any>(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetch('/api/profile')
-      .then(res => res.json())
-      .then(setProfile);
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to load');
+        return res.json();
+      })
+      .then(setProfile)
+      .catch(err => setError(err.message));
   }, []);
+
+  if (error) {
+    return (
+      <section id="home" className="min-h-[50vh] flex items-center justify-center px-4">
+        <div className="glass rounded-xl p-4 text-red-400 max-w-4xl mx-auto w-full text-center">
+          Error loading profile: {error}
+        </div>
+      </section>
+    );
+  }
 
   if (!profile) return null;
 

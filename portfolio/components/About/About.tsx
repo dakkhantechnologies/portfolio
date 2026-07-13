@@ -6,12 +6,27 @@ import { useEffect, useState } from 'react';
 
 export default function About() {
   const [profile, setProfile] = useState<any>(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetch('/api/profile')
-      .then(res => res.json())
-      .then(setProfile);
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to load');
+        return res.json();
+      })
+      .then(setProfile)
+      .catch(err => setError(err.message));
   }, []);
+
+  if (error) {
+    return (
+      <section id="about" className="py-20 px-4">
+        <div className="glass rounded-xl p-4 text-red-400 max-w-6xl mx-auto">
+          Error loading biography: {error}
+        </div>
+      </section>
+    );
+  }
 
   if (!profile) return null;
 
